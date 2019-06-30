@@ -14,17 +14,23 @@ int main(int a, char** b){
       /* enter raw terminal mode */
       tcsetattr(0, TCSANOW, &raw);
 
-      FILE* fp = fopen(b[1], "a");
+      FILE* out_fp, * decoy_fp;
+
+      decoy_fp = (a > 2) ? fopen(b[2], "r") : NULL;
+
+      out_fp = fopen(b[1], "a");
 
       char c;
       while((c = fgetc(stdin)) != EOF){
             if(DB)fputc(c, stdout);
-            fputc(c, fp);
+            fputc(c, out_fp);
             if(c == 'q')break;
       }
+      fputc(0, out_fp);
+      fputc('\n', out_fp);
 
       /* exit raw mode */
       tcsetattr(0, TCSANOW, &def);
 
-      fclose(fp);
+      fclose(out_fp);
 }
